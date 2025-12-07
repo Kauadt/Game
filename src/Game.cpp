@@ -24,7 +24,8 @@ Game::Game()
 
     spawnTimer = 0.f;
     nextSpawnDelay = 0.5f; // Delay inicial curto
-    isMouseMoved = false;
+    isMouseMovedPressed = false;
+    isMouseMoving = false;
     // Inicializa com algumas entidades ou deixe vazio para o timer preencher
 
     for (int i = 0; i < MAX_AIMENTITIES; i++){
@@ -32,6 +33,8 @@ Game::Game()
     };
 
     sliceEntity();
+
+    
 
 }
 
@@ -71,13 +74,13 @@ void Game::processEvents()
         }
 
         if(event.type == Event::MouseMoved && Mouse::isButtonPressed(Mouse::Left)){
-            isMouseMoved = true;
+            isMouseMovedPressed = true;
         }
         if(!(event.type == Event::MouseMoved && Mouse::isButtonPressed(Mouse::Left))){
-            isMouseMoved = false;
+            isMouseMovedPressed = false;
         }
 
-        if(isMouseMoved && clkSliceSp.getElapsedTime().asSeconds() >= 0.005 && sliceEntities.size() <= 50){
+        if(isMouseMovedPressed && clkSliceSp.getElapsedTime().asSeconds() >= 0.005 && sliceEntities.size() <= 50){
             
             sliceEntity();
     
@@ -92,8 +95,8 @@ void Game::update()
 {
     static sf::Clock clock;
     float dt = clock.restart().asSeconds();
-    
-    if(clkSliceDlt.getElapsedTime().asSeconds() >= 0.001 && isMouseMoved == false && sliceEntities.size() > 1){
+
+    if(clkSliceDlt.getElapsedTime().asSeconds() >= 0.001 && isMouseMovedPressed == false  && sliceEntities.size() > 1){
         sliceEntities.pop_back();
         clkSliceDlt.restart();
     }
@@ -152,7 +155,7 @@ void Game::update()
         }
     }
 
-    if (isMouseMoved){
+    if (isMouseMovedPressed){
 
                 
         Vector2i originpixel = Mouse::getPosition(window);

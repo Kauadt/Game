@@ -27,7 +27,8 @@ private:
     // Variáveis para controle de spawn com delay
     float spawnTimer;
     float nextSpawnDelay;
-    bool isMouseMoved;
+    bool isMouseMovedPressed;
+    bool isMouseMoving;
 
     void processEvents();
     void update();
