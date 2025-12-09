@@ -16,13 +16,17 @@ AimEntity::AimEntity(sf::Vector2f startPos, sf::Vector2u screenSize)
     shape.setOrigin(shape.getRadius(), shape.getRadius());
     dead = false;
 
+    fallingStraight = false;
+    fallSpeed = 200.f;
+
     P0 = startPos;
     P0.y = screenSize.y + shape.getRadius();
 
     float margin = 50.f;
     float endX;
 
-    do {
+    do
+    {
         endX = randomFloat(margin, screenSize.x - margin);
     } while (std::abs(endX - P0.x) < 200.f);
 
@@ -43,20 +47,30 @@ AimEntity::AimEntity(sf::Vector2f startPos, sf::Vector2u screenSize)
 
 void AimEntity::update(float dt)
 {
-    t += dt * speed;
-
-    if (t >= 1.f)
+    if (!fallingStraight)
     {
-        t = 1.f;
-        dead = true;
+        t += dt * speed;
+
+        if (t >= 1.f)
+        {
+            t = 1.f;
+            dead = true;
+        }
+
+        float u = 1.f - t;
+        float uu = u * u;
+        float tt = t * t;
+
+        sf::Vector2f pos = (uu * P0) + (2.f * u * t * P1) + (tt * P2);
+        shape.setPosition(pos);
     }
+    else
+    {
+        shape.move(0.f, fallSpeed * dt);
 
-    float u = 1.f - t;
-    float uu = u * u;
-    float tt = t * t;
-
-    sf::Vector2f pos = (uu * P0) + (2.f * u * t * P1) + (tt * P2);
-    shape.setPosition(pos);
+        if (shape.getPosition().y > 1000.f)
+            dead = true;
+    }
 }
 
 void AimEntity::draw(sf::RenderWindow &window) const

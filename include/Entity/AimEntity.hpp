@@ -13,6 +13,9 @@ protected:
     float speed;
     bool dead;
 
+    bool fallingStraight;
+    float fallSpeed;
+
 public:
     AimEntity(sf::Vector2f startPos, sf::Vector2u screenSize);
 

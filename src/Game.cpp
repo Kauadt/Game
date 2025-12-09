@@ -42,12 +42,10 @@ Game::Game()
     FloatRect bounds = gameOverText.getLocalBounds();
     gameOverText.setOrigin(
         bounds.left + bounds.width / 2.f,
-        bounds.top + bounds.height / 2.f
-    );
+        bounds.top + bounds.height / 2.f);
     gameOverText.setPosition(
         window.getSize().x / 2.f,
-        window.getSize().y / 2.f - 120.f
-    );
+        window.getSize().y / 2.f - 120.f);
 
     highScoreText.setFont(font);
     highScoreText.setCharacterSize(22);
@@ -57,12 +55,10 @@ Game::Game()
     FloatRect hsBounds = highScoreText.getLocalBounds();
     highScoreText.setOrigin(
         hsBounds.left + hsBounds.width / 2.f,
-        hsBounds.top + hsBounds.height / 2.f
-    );
+        hsBounds.top + hsBounds.height / 2.f);
     highScoreText.setPosition(
         window.getSize().x / 2.f,
-        window.getSize().y / 2.f - 20.f
-    );
+        window.getSize().y / 2.f - 20.f);
 
     playButton.setSize({200.f, 60.f});
     playButton.setFillColor(Color::Green);
@@ -77,8 +73,7 @@ Game::Game()
     FloatRect playBounds = playText.getLocalBounds();
     playText.setOrigin(
         playBounds.left + playBounds.width / 2.f,
-        playBounds.top + playBounds.height / 2.f
-    );
+        playBounds.top + playBounds.height / 2.f);
     playText.setPosition(playButton.getPosition());
 
     restartButton.setSize({220.f, 60.f});
@@ -86,8 +81,7 @@ Game::Game()
     restartButton.setOrigin(restartButton.getSize() / 2.f);
     restartButton.setPosition(
         window.getSize().x / 2.f,
-        window.getSize().y / 2.f + 80.f
-    );
+        window.getSize().y / 2.f + 80.f);
 
     restartText.setFont(font);
     restartText.setString("RESTART");
@@ -97,8 +91,7 @@ Game::Game()
     FloatRect restartBounds = restartText.getLocalBounds();
     restartText.setOrigin(
         restartBounds.left + restartBounds.width / 2.f,
-        restartBounds.top + restartBounds.height / 2.f
-    );
+        restartBounds.top + restartBounds.height / 2.f);
     restartText.setPosition(restartButton.getPosition());
 
     screenState = ScreenState::MENU;
@@ -197,47 +190,39 @@ void Game::update()
         clkSliceDlt.restart();
     }
 
-    for (auto &s : sliceEntities)
+    if (!sliceEntities.empty())
     {
-        if (s == sliceEntities.front())
+        auto &s = sliceEntities.front();
+
+        for (auto &e : entities)
         {
-            for (auto &e : entities)
+            if (auto f = dynamic_cast<FruitEntity *>(e.get()))
             {
-                if (auto f = dynamic_cast<FruitEntity *>(e.get()))
+                if (f->getBounds().contains(s->getPosition()) && !f->wasSliced())
                 {
-                    if (f->getBounds().contains(s->getPosition()))
-                    {
-                        f->setDead(s->getPosition());
-                        state.addScore(10);
-                    }
+                    f->setDead(s->getPosition());
+                    state.addScore(10);
                 }
+            }
 
-                if (auto b = dynamic_cast<BombEntity *>(e.get()))
+            if (auto b = dynamic_cast<BombEntity *>(e.get()))
+            {
+                if (b->getBounds().contains(s->getPosition()) && !b->isDead())
                 {
-                    if (b->getBounds().contains(s->getPosition()))
-                    {
-                        b->setDead(s->getPosition());
-                        state.loseLife();
+                    b->setDead(s->getPosition());
 
-                        if (state.isGameOver())
-                        {
-                            highScoreText.setString(
-                                "High Score: " + std::to_string(state.getHighScore())
-                            );
+                    highScoreText.setString(
+                        "High Score: " + std::to_string(state.getHighScore()));
 
-                            FloatRect hsBounds = highScoreText.getLocalBounds();
-                            highScoreText.setOrigin(
-                                hsBounds.left + hsBounds.width / 2.f,
-                                hsBounds.top + hsBounds.height / 2.f
-                            );
-                            highScoreText.setPosition(
-                                window.getSize().x / 2.f,
-                                window.getSize().y / 2.f - 20.f
-                            );
+                    FloatRect hsBounds = highScoreText.getLocalBounds();
+                    highScoreText.setOrigin(
+                        hsBounds.left + hsBounds.width / 2.f,
+                        hsBounds.top + hsBounds.height / 2.f);
+                    highScoreText.setPosition(
+                        window.getSize().x / 2.f,
+                        window.getSize().y / 2.f - 20.f);
 
-                            screenState = ScreenState::GAME_OVER;
-                        }
-                    }
+                    screenState = ScreenState::GAME_OVER;
                 }
             }
         }
@@ -259,18 +244,15 @@ void Game::update()
                                    if (state.isGameOver())
                                    {
                                        highScoreText.setString(
-                                           "High Score: " + std::to_string(state.getHighScore())
-                                       );
+                                           "High Score: " + std::to_string(state.getHighScore()));
 
                                        FloatRect hsBounds = highScoreText.getLocalBounds();
                                        highScoreText.setOrigin(
                                            hsBounds.left + hsBounds.width / 2.f,
-                                           hsBounds.top + hsBounds.height / 2.f
-                                       );
+                                           hsBounds.top + hsBounds.height / 2.f);
                                        highScoreText.setPosition(
                                            window.getSize().x / 2.f,
-                                           window.getSize().y / 2.f - 20.f
-                                       );
+                                           window.getSize().y / 2.f - 20.f);
 
                                        screenState = ScreenState::GAME_OVER;
                                    }
@@ -326,8 +308,7 @@ void Game::update()
 
                     currentSlice->setPosition(
                         posAnterior.x + dx * maxDistance,
-                        posAnterior.y + dy * maxDistance
-                    );
+                        posAnterior.y + dy * maxDistance);
                 }
             }
         }

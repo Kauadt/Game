@@ -20,7 +20,9 @@ void FruitEntity::setDead(sf::Vector2f pos)
     if (shape.getGlobalBounds().contains(pos))
     {
         sliced = true;
-        dead = true;
+
+        fallingStraight = true; 
+        dead = false;   
     }
 }
 
