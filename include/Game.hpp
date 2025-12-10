@@ -8,6 +8,9 @@
 #include "Entity/SliceEntity.hpp"
 #include "GameState.hpp"
 
+using namespace std;
+using namespace sf;
+
 #define MAX_ENTITIES 5
 #define MAX_SLICEENTITIES 50
 
@@ -22,6 +25,9 @@ class Game
 {
 private:
     sf::RenderWindow window;
+
+    Texture backTexture;
+    Sprite backSprite;
 
     std::vector<std::unique_ptr<AimEntity>> entities;
     std::vector<std::unique_ptr<SliceEntity>> sliceEntities;

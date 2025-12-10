@@ -2,10 +2,14 @@
 #include "Entity.hpp"
 #include <SFML/Graphics.hpp>
 
+using namespace std;
+using namespace sf;
+
 class AimEntity : public Entity
 {
 protected:
-    sf::CircleShape shape;
+    Texture texture;  
+    Sprite sprite;
     sf::Vector2f P0;
     sf::Vector2f P1;
     sf::Vector2f P2;
@@ -25,4 +29,5 @@ public:
 
     sf::FloatRect getBounds() const override;
     bool isDead() const override;
+    void setDead(Vector2f boundPos);
 };

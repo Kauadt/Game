@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <random>
 #include <cmath>
+#include <iostream>
 
 using namespace sf;
 
@@ -14,8 +15,15 @@ static float randomFloat(float min, float max)
 }
 
 Game::Game()
+    
     : window(sf::VideoMode(900, 550), "Game")
 {
+    if(!backTexture.loadFromFile("assets/fruitBackGround.png")){
+        cout << "erro ao carregar background" << endl; 
+    }
+
+    backSprite.setTexture(backTexture);
+
     window.setFramerateLimit(60);
 
     spawnTimer = 0.f;
@@ -194,6 +202,7 @@ void Game::update()
     {
         auto &s = sliceEntities.front();
 
+        // PODE TER DADO ERRO NA QUEDA LIVRE!!!!!!!!!!!!!!!!!!!!
         for (auto &e : entities)
         {
             if (auto f = dynamic_cast<FruitEntity *>(e.get()))
@@ -207,10 +216,11 @@ void Game::update()
 
             if (auto b = dynamic_cast<BombEntity *>(e.get()))
             {
-                if (b->getBounds().contains(s->getPosition()) && !b->isDead())
+                if (b->getBounds().contains(s->getPosition()) && !b->isExploding())
                 {
+                    
                     b->setDead(s->getPosition());
-
+                    
                     highScoreText.setString(
                         "High Score: " + std::to_string(state.getHighScore()));
 
@@ -321,6 +331,7 @@ void Game::update()
 void Game::render()
 {
     window.clear();
+    window.draw((backSprite));
 
     if (screenState == ScreenState::MENU)
     {
