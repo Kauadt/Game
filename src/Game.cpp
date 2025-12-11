@@ -159,6 +159,10 @@ void Game::update()
         clkSliceDlt.restart();
     }
 
+    if(isMouseMovedPressed == false)
+        sliceEntities[0].get()->setPosition(Vector2f(1000.f,1000.f));
+
+
     if (!sliceEntities.empty())
     {
         auto &s = sliceEntities.front();
