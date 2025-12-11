@@ -1,9 +1,12 @@
+#pragma once
+#include <string>
+
 class GameState
 {
 private:
-    int score;
+    long long score;
     int lives;
-    int highScore;
+    long long highScore;
 
 public:
     GameState();
@@ -12,9 +15,9 @@ public:
     void addScore(int value);
     void loseLife();
 
-    int getScore() const;
+    long long getScore() const;
     int getLives() const;
-    int getHighScore() const;
+    long long getHighScore() const;
 
     bool isGameOver() const;
 

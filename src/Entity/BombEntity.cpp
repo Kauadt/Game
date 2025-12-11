@@ -9,7 +9,7 @@ using namespace sf;
 BombEntity::BombEntity(sf::Vector2f startPos, sf::Vector2u screenSize)
     : AimEntity(startPos, screenSize)
 {
-    if(!texture.loadFromFile("assets/bomb.png")){
+    if(!texture.loadFromFile("assets/texture/bomb.png")){
         cout<< "erro ao carregar sprite"<< endl;
     }
     sprite.setTexture(texture);
@@ -34,7 +34,7 @@ bool BombEntity::isClicked(const sf::Vector2f &mousePos) const
 void BombEntity::setDead(sf::Vector2f boundPos)
 {
     if (sprite.getGlobalBounds().contains(boundPos)){
-       if(!texture.loadFromFile("assets/bomb-explode.png")){
+       if(!texture.loadFromFile("assets/texture/bomb-explode.png")){
         cout<< "erro ao carregar sprite"<< endl;
         }
         sprite.setTexture(texture);
@@ -50,7 +50,7 @@ void BombEntity::setDead(sf::Vector2f boundPos)
 }
 
 void BombEntity::explode(){
-    if(!texture.loadFromFile("assets/bomb-explode.png")){
+    if(!texture.loadFromFile("assets/texture/bomb-explode.png")){
         cout<< "erro ao carregar sprite"<< endl;
         }
     sprite.setTexture(texture);

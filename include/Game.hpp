@@ -24,36 +24,39 @@ enum class ScreenState
 class Game
 {
 private:
-    sf::RenderWindow window;
+    RenderWindow window;
 
     Texture backTexture;
     Sprite backSprite;
 
-    std::vector<std::unique_ptr<AimEntity>> entities;
-    std::vector<std::unique_ptr<SliceEntity>> sliceEntities;
+    vector<unique_ptr<AimEntity>> entities;
+    vector<unique_ptr<SliceEntity>> sliceEntities;
 
-    sf::Clock clkSliceSp;
-    sf::Clock clkSliceDlt;
+    Clock clkSliceSp;
+    Clock clkSliceDlt;
 
     float spawnTimer;
     float nextSpawnDelay;
     bool isMouseMovedPressed;
 
     GameState state;
-    sf::Font font;
-    sf::Text scoreText;
-    sf::Text livesText;
+    Font font;
+    Font scoreFont;
+    Text scoreText;
 
     ScreenState screenState;
 
-    sf::RectangleShape playButton;
-    sf::Text playText;
+    Texture playTexture;
+    Sprite playButton;
 
-    sf::RectangleShape restartButton;
-    sf::Text restartText;
+    Texture restartTexture;
+    Sprite restartButton;
 
-    sf::Text gameOverText;
-    sf::Text highScoreText;
+    Text gameOverText;
+    Text highScoreText;
+
+    Texture heartTexture;
+    vector<Sprite> hearts;
 
     void processEvents();
     void update();
@@ -61,6 +64,7 @@ private:
     void spawnEntity();
     void sliceEntity();
     void resetGame();
+    void updateHearts();
 
 public:
     Game();

@@ -3,8 +3,10 @@
 
 GameState::GameState()
 {
+    score = 0;
+    lives = 3;
+    highScore = 0;
     loadHighScore();
-    reset();
 }
 
 void GameState::reset()
@@ -16,12 +18,9 @@ void GameState::reset()
 void GameState::addScore(int value)
 {
     score += value;
-
     if (score > highScore)
-    {
         highScore = score;
-        saveHighScore();
-    }
+    saveHighScore();
 }
 
 void GameState::loseLife()
@@ -29,7 +28,7 @@ void GameState::loseLife()
     lives--;
 }
 
-int GameState::getScore() const
+long long GameState::getScore() const
 {
     return score;
 }
@@ -39,7 +38,7 @@ int GameState::getLives() const
     return lives;
 }
 
-int GameState::getHighScore() const
+long long GameState::getHighScore() const
 {
     return highScore;
 }
@@ -51,16 +50,30 @@ bool GameState::isGameOver() const
 
 void GameState::loadHighScore()
 {
-    std::ifstream file("highscore.txt");
+    std::ifstream file("highscore.dat");
+    if (!file.is_open())
+    {
+        highScore = 0;
+        return;
+    }
 
-    if (file.is_open())
-        file >> highScore;
+    long long value;
+    file >> value;
+
+    if (!file.fail() && value >= 0)
+        highScore = value;
     else
         highScore = 0;
+
+    file.close();
 }
 
 void GameState::saveHighScore()
 {
-    std::ofstream file("highscore.txt");
+    std::ofstream file("highscore.dat", std::ios::trunc);
+    if (!file.is_open())
+        return;
+
     file << highScore;
+    file.close();
 }

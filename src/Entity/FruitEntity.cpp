@@ -1,68 +1,47 @@
 #include "Entity/FruitEntity.hpp"
 #include <cmath>
-#include<iostream>
-
-
+#include <iostream>
 
 using namespace std;
 using namespace sf;
 
-const vector<std::string> FruitEntity::ALL_FRUITS = 
-    {"assets/banana.png", "assets/apple.png", "assets/watermelon.png", "assets/orange.png"};
+const vector<string> FruitEntity::ALL_FRUITS =
+    {"assets/texture/banana.png", "assets/texture/apple.png", "assets/texture/watermelon.png", "assets/texture/orange.png"};
 
-const vector<std::string> FruitEntity::ALL_FRUITS_SLICED = 
-    {"assets/banana-cut.png", "assets/apple-cut.png", "assets/watermelon-cut.png", "assets/orange-cut.png"};
+const vector<string> FruitEntity::ALL_FRUITS_SLICED =
+    {"assets/texture/banana-cut.png", "assets/texture/apple-cut.png", "assets/texture/watermelon-cut.png", "assets/texture/orange-cut.png"};
 
-FruitEntity::FruitEntity(sf::Vector2f startPos, sf::Vector2u screenSize)
+FruitEntity::FruitEntity(Vector2f startPos, Vector2u screenSize)
 : AimEntity(startPos, screenSize)
 {
     sliced = false;
 
-    int qntFrutas = FruitEntity::ALL_FRUITS.size();
-
-    this->fruit = rand() % qntFrutas;
-    
-    if(!texture.loadFromFile(FruitEntity::ALL_FRUITS[this->fruit])){
-        cout << "Erro ao carregar imagem: " << FruitEntity::ALL_FRUITS[this->fruit] << endl;
-    }
-
+    fruit = rand() % ALL_FRUITS.size();
+    texture.loadFromFile(ALL_FRUITS[fruit]);
     sprite.setTexture(texture);
-    
 }
 
-
-// PODE TER DADO ERRO NA QUEDA LIVRE!!!!!!!!!!!!!!!!!!!!
-bool FruitEntity::isClicked(const sf::Vector2f &mousePos) const
+bool FruitEntity::isClicked(const Vector2f &mousePos) const
 {
     FloatRect bounds = sprite.getGlobalBounds();
-    Vector2f center = {
-        bounds.left + bounds.width / 2.0f,
-        bounds.top + bounds.height / 2.0f
-    };
-
-    float radius = bounds.width / 2.0f;
+    Vector2f center(bounds.left + bounds.width / 2.f,
+                    bounds.top + bounds.height / 2.f);
+    float r = bounds.width / 2.f;
 
     float dx = center.x - mousePos.x;
     float dy = center.y - mousePos.y;
 
-    return (dx * dx + dy * dy) <= (radius * radius);
+    return (dx * dx + dy * dy) <= (r * r);
 }
 
-
-// PODE TER DADO ERRO NA QUEDA LIVRE!!!!!!!!!!!!!!!!!!!!
-void FruitEntity::setDead(sf::Vector2f pos)
+void FruitEntity::setDead(Vector2f pos)
 {
     if (sprite.getGlobalBounds().contains(pos))
     {
         sliced = true;
-
-        fallingStraight = true; 
-        dead = false;  
-        
-        if(!texture.loadFromFile(ALL_FRUITS_SLICED[fruit])){
-        cout<<"erro ao carregar imagem"<<endl;
-        }
-
+        fallingStraight = true;
+        dead = false;
+        texture.loadFromFile(ALL_FRUITS_SLICED[fruit]);
         sprite.setTexture(texture);
     }
 }

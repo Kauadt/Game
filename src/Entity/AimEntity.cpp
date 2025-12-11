@@ -1,8 +1,7 @@
 #include "Entity/AimEntity.hpp"
-#include <cmath>
 #include <random>
+#include <cmath>
 
-// Função auxiliar interna
 static float randomFloat(float a, float b)
 {
     static std::random_device rd;
@@ -11,104 +10,87 @@ static float randomFloat(float a, float b)
     return dist(gen);
 }
 
-
-// PODE TER DADO ERRO NA QUEDA LIVRE!!!!!!!!!!!!!!!!!!!!
-AimEntity::AimEntity(sf::Vector2f startPos, sf::Vector2u screenSize)
+AimEntity::AimEntity(Vector2f startPos, Vector2u screenSize)
 {
-    FloatRect textureRect = sprite.getLocalBounds();
-
-    sprite.setOrigin(textureRect.width / 2.f , textureRect. height / 2.f);
-
-    // Inicializa flag de morte
     dead = false;
+    fallingStraight = false;
+    fallSpeed = 150.f;
 
-    float entityRadius = sprite.getGlobalBounds().height / 2.f;
+    FloatRect rect = sprite.getLocalBounds();
+    sprite.setOrigin(rect.width / 2.f, rect.height / 2.f);
 
-    // --- 1. Ponto Inicial (P0) ---
+    float radius = sprite.getGlobalBounds().height / 2.f;
+
     P0 = startPos;
-    P0.y = screenSize.y + entityRadius; // Nasce logo abaixo da tela
+    P0.y = screenSize.y + radius;
 
-    // --- 2. Ponto Final (P2) ---
     float margin = 50.f;
-    float minX = margin;
-    float maxX = screenSize.x - margin;
     float endX;
 
-    // Garante que o destino X esteja longe da origem X
     do {
-        endX = randomFloat(minX, maxX);
-    } while (std::abs(endX - P0.x) < 220.f);
+        endX = randomFloat(margin, screenSize.x - margin);
+    } while (abs(endX - P0.x) < 220.f);
 
     P2.x = endX;
-    P2.y = screenSize.y + entityRadius; // Cai na mesma altura que nasceu
+    P2.y = screenSize.y + radius;
 
-    // --- 3. Ponto de Controle (P1 - O Pico) ---
     P1.x = (P0.x + P2.x) / 2.f;
 
-    // Altura aleatória entre 15% (alto) e 60% (médio) da tela
-    float maxPeakY = screenSize.y * 0.25f; 
-    float minPeakY = screenSize.y * 0.50f;
-    float targetPeakY = randomFloat(maxPeakY, minPeakY);
+    float y1 = randomFloat(screenSize.y * 0.25f, screenSize.y * 0.50f);
+    P1.y = 2.f * y1 - P0.y;
 
-    P1.y = 2.f * targetPeakY - P0.y;
-
-    // --- 4. Velocidade baseada em Duração ---
     t = 0.f;
-    float duration = randomFloat(3.f, 7.f); 
-    speed = 1.0f / duration;
+    float duration = randomFloat(3.f, 7.f);
+    speed = 1.f / duration;
 
-    // Define a posição inicial imediatamente para evitar que apareça em (0,0)
-    // por 1 frame antes do primeiro update.
     sprite.setPosition(P0);
 }
 
-
-// PODE TER DADO ERRO NA QUEDA LIVRE!!!!!!!!!!!!!!!!!!!!
 void AimEntity::update(float dt)
 {
-    // Incrementa t
-    t += dt * speed;
-
-    // Verifica se chegou ao final da curva
-    if (t >= 1.0f)
+    if (fallingStraight)
     {
-        t = 1.0f;
-        dead = true; // Marca para destruição natural
+        sprite.move(0.f, fallSpeed * dt);
+        if (sprite.getPosition().y > 900.f)
+            dead = true;
+        return;
     }
 
-    // Cálculo da Curva de Bézier Quadrática
+    t += dt * speed;
+
+    if (t >= 1.f)
+    {
+        t = 1.f;
+        dead = true;
+    }
+
     float u = 1.f - t;
     float uu = u * u;
     float tt = t * t;
 
-    sf::Vector2f currentPos = (uu * P0) + (2.f * u * t * P1) + (tt * P2);
-
-    sprite.setPosition(currentPos);
+    Vector2f pos = (uu * P0) + (2.f * u * t * P1) + (tt * P2);
+    sprite.setPosition(pos);
 }
 
-void AimEntity::draw(sf::RenderWindow &window) const
+void AimEntity::draw(RenderWindow &window) const
 {
     window.draw(sprite);
 }
 
-void AimEntity::render(sf::RenderWindow &window)
+void AimEntity::render(RenderWindow &window)
 {
     draw(window);
 }
 
-
-// PODE TER DADO ERRO NA QUEDA LIVRE!!!!!!!!!!!!!!!!!!!!
-sf::FloatRect AimEntity::getBounds() const
+FloatRect AimEntity::getBounds() const
 {
     return sprite.getGlobalBounds();
 }
 
-void AimEntity::setDead(Vector2f boundPos) {
-
-    FloatRect thisBound = sprite.getGlobalBounds(); 
-    if(thisBound.contains(boundPos)){
+void AimEntity::setDead(Vector2f pos)
+{
+    if (sprite.getGlobalBounds().contains(pos))
         dead = true;
-    }
 }
 
 bool AimEntity::isDead() const
